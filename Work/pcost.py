@@ -6,11 +6,7 @@ import sys
 
 
 def portfolio_cost(file_name):
-    try:
-        f = open(file_name, 'rt')
-    except FileNotFoundError:
-        raise FileNotFoundError(file_name)
-
+    f = open(file_name, 'rt')
     rows = csv.reader(f)
     f.close()
 
