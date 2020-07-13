@@ -4,12 +4,13 @@
 import csv
 import sys
 import os
+from pprint import pprint
 
 
 def read_portfolio(file_name):
     """
-    Computes the total cost (shares*price) of a portfolio file
-    :param file_name:
+    Reads a portfolio file
+    :param file_name: portfolio file name.
     :return:
     """
     if not os.path.exists(file_name):
@@ -23,10 +24,38 @@ def read_portfolio(file_name):
         next(rows)
         for row in rows:
             try:
-                portfolio.append((row[0], int(row[1]), float(row[2])))
+                portfolio.append({
+                    'name': row[0],
+                    'shares': int(row[1]),
+                    'price': float(row[2])
+                })
             except ValueError:
                 print("Couldn't parse", row)
         return portfolio
+
+
+def read_prices(file_name):
+    """
+    Reads prices from a file name.
+    :param file_name:
+    :return:
+    """
+    if not os.path.exists(file_name):
+        print(f'ERROR :: Can\'t find {file_name}')
+        sys.exit()
+
+    prices = {}
+    with open(file_name, 'rt') as f:
+        rows = csv.reader(f)
+        for row in rows:
+            try:
+                prices[row[0]] = row[1]
+            except ValueError:
+                print('Couldn\'t parse', row)
+            except IndexError:
+                print('There\'s an empty line')
+
+        return prices
 
 
 if len(sys.argv) == 2:
@@ -34,4 +63,5 @@ if len(sys.argv) == 2:
 else:
     filename = 'Data/portfolio.csv'
 
-print(read_portfolio('Data/portfolio.csv'))
+pprint(read_portfolio('Data/portfolio.csv'))
+pprint(read_prices('Data/prices.csv'))
