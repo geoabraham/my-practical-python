@@ -3,22 +3,25 @@
 # Exercise 1.27
 import csv
 import sys
+import os
 
 
 def portfolio_cost(file_name):
-    f = open(file_name, 'rt')
-    rows = csv.reader(f)
-    f.close()
+    if not os.path.exists(file_name):
+        print(f'ERROR :: Can\'t find {file_name}')
+        sys.exit()
 
     total = 0.0
-    next(rows)
 
-    for row in rows:
-        try:
-            total += int(row[1]) * float(row[2])
-        except ValueError:
-            print("Couldn't parse", row)
-    return total
+    with open(file_name, 'rt') as f:
+        rows = csv.reader(f)
+        next(rows)
+        for row in rows:
+            try:
+                total += int(row[1]) * float(row[2])
+            except ValueError:
+                print("Couldn't parse", row)
+        return total
 
 
 if len(sys.argv) == 2:
