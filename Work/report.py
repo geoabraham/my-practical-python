@@ -101,5 +101,5 @@ for share in portfolio:
     total_value += share['shares'] * prices[share['name']]
 
 print('Current value', total_value)
-print('Gain', total_value - total_cost)
+print('Gain', round(total_value - total_cost, 2))
 pprint(print_report(portfolio, prices))
