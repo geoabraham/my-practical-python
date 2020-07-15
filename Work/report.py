@@ -2,9 +2,8 @@
 #
 # Exercise 2.4
 import csv
-import sys
 import os
-from pprint import pprint
+import sys
 
 
 def read_portfolio(file_name):
@@ -58,28 +57,20 @@ def read_prices(file_name):
         return p
 
 
-def print_report(portfolio, prices):
+def make_report(portfolio, prices):
     """
-    compute the current value of the portfolio along with the gain/loss
+    takes a list of stocks and dictionary of prices as input
+    and returns a list of tuples.
     :param portfolio:
     :param prices:
     :return:
     """
-    total = 0.0
-    current_value = []
-    for s in portfolio:
-        total += s['shares'] * s['price']
-        value = {
-            'name': s['name'],
-            'shares': s['shares'],
-            'cost': s['price'],
-            'value': prices[s['name']],
-            'gain': round(s['shares'] * prices[s['name']] - s['shares'] * s['price'], 2),
-            'gain(%)': round((s['shares'] * prices[s['name']]) / (s['shares'] * s['price']) * 100 - 100, 2),
-        }
-        current_value.append(value)
-
-    return current_value
+    data = []
+    for stock in portfolio:
+        current_price = prices[stock['name']]
+        diff = current_price - stock['price']
+        data.append((stock['name'], stock['shares'], current_price, round(diff, 2)))
+    return data
 
 
 if len(sys.argv) == 2:
@@ -93,13 +84,20 @@ prices = read_prices('Data/prices.csv')
 total_cost = 0.0
 for share in portfolio:
     total_cost += share['shares'] * share['price']
-
 print('Total cost', total_cost)
 
 total_value = 0.0
 for share in portfolio:
     total_value += share['shares'] * prices[share['name']]
-
 print('Current value', total_value)
+
 print('Gain', round(total_value - total_cost, 2))
-pprint(print_report(portfolio, prices))
+
+headers = ('Name', 'Shares', 'Price', 'Change')
+print('%10s %10s %10s %10s' % headers)
+print(('-' * 10 + ' ') * len(headers))
+
+report = make_report(portfolio, prices)
+for row in report:
+    price_formatted = '${:.2f}'.format(row[2])
+    print('{0[0]:>10s} {0[1]:10d} {1:>10s} {0[3]:10.2f}'.format(row, price_formatted))
